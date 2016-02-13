@@ -153,7 +153,8 @@ angular.module('conFusion.controllers', [])
             };
         }])
 
-        .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function($scope, $stateParams, menuFactory, baseURL) {
+        .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL','$ionicPopover','favoriteFactory','$ionicModal',
+        function($scope, $stateParams, menuFactory, baseURL, $ionicPopover, favoriteFactory, $ionicModal) {
           
             $scope.baseURL = baseURL;
             
@@ -171,6 +172,51 @@ angular.module('conFusion.controllers', [])
                                 $scope.message = "Error: "+response.status + " " + response.statusText;
                             }
             );
+
+            $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {
+                scope: $scope
+            }).then(function(popover) {
+                $scope.popover = popover;
+            });
+
+            $scope.openPopover = function($event) {
+                $scope.popover.show($event);
+            };
+            $scope.closePopover = function() {
+                $scope.popover.hide();
+            };
+
+            $scope.addFavorite = function() {
+                favoriteFactory.addToFavorites($scope.dish.id);
+                $scope.closePopover();
+            }
+
+
+            // Create the reserve modal that we will use later
+            $ionicModal.fromTemplateUrl('templates/dish-comment.html', {
+                scope: $scope
+            }).then(function(modal) {
+                $scope.commentForm = modal;
+            });
+
+            // Triggered in the reserve modal to close it
+            $scope.closeComment = function() {
+                $scope.commentForm.hide();
+            };
+
+            // Open the reserve modal
+            $scope.openComment = function() {
+                $scope.commentForm.show();
+            };
+
+            $scope.mycomment = {rating:5, comment:"", author:"", date:""};
+            $scope.submitComment = function () {
+                console.log($scope.mycomment);
+                $scope.mycomment.date = new Date().toISOString();
+                $scope.dish.comments.push($scope.mycomment);              
+                $scope.closeComment();
+                $scope.closePopover();
+            } 
 
             
         }])

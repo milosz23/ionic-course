@@ -15,10 +15,14 @@ angular.module('conFusion.services', ['ngResource'])
             },
             getObject: function(key,defaultValue) {
               return JSON.parse($window.localStorage[key] || defaultValue);
-            }
+            },
+            // deleteFromStorage: function(obj, key) {
+            //   var a = JSON.parse($window.localStorage[obj]);
+            //   console.log(a);
+            // }
           }
         }])
-        .factory('menuFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+        .factory('menuFactory', ['$resource', 'baseURL', function($resource, baseURL) {
           
             return $resource(baseURL + "dishes/:id", null, {
                 'update': {
@@ -27,13 +31,12 @@ angular.module('conFusion.services', ['ngResource'])
             });
         }])
 
-        .factory('promotionFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+        .factory('promotionFactory', ['$resource', 'baseURL', function($resource, baseURL) {
                     return $resource(baseURL + "promotions/:id");
 
         }])
 
         .factory('corporateFactory', ['$resource', 'baseURL', function($resource,baseURL) {
-    
     
             return $resource(baseURL+"leadership/:id");
     
@@ -48,7 +51,7 @@ angular.module('conFusion.services', ['ngResource'])
 
         .factory('favoriteFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
           var favFac = {};
-          var favorites = [];
+          var favorites = JSON.parse(window.localStorage['favorites']);
 
           favFac.addToFavorites = function (index) {
               for (var i = 0; i < favorites.length; i++) {
@@ -56,6 +59,7 @@ angular.module('conFusion.services', ['ngResource'])
                       return;
               }
               favorites.push({id: index});
+              window.localStorage['favorites'] = JSON.stringify(favorites);
           };
 
           favFac.deleteFromFavorites = function (index) {
@@ -64,9 +68,11 @@ angular.module('conFusion.services', ['ngResource'])
                       favorites.splice(i, 1);
                   }
               }
+              window.localStorage['favorites'] = JSON.stringify(favorites);
           }
 
           favFac.getFavorites = function () {
+            console.log(favorites);
               return favorites;
           };
 

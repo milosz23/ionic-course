@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('conFusion.services', ['ngResource'])
-        .constant("baseURL","http://test.vi:3000/")
+        .constant("baseURL","http://192.168.0.104:3000/")
         .factory('$localStorage', ['$window', function($window) {
           return {
             store: function(key, value) {
